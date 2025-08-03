@@ -205,3 +205,36 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# PyTorch and ML specific
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+
+# Model outputs and training artifacts
+checkpoints/
+outputs/
+runs/
+wandb/
+logs/
+
+# Data
+data/
+datasets/
+*.h5
+*.hdf5
+
+# Profiling and memory analysis
+*.prof
+memory_profiles/
+memory_timeline.png
+memory_trace.json
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~

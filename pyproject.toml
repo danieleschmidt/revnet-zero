@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "revnet-zero"
+dynamic = ["version"]
+description = "Memory-efficient reversible transformers for long-context training"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "RevNet-Zero Team", email = "team@revnet-zero.org"},
+]
+keywords = ["transformers", "reversible-networks", "memory-efficiency", "deep-learning"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.21.0",
+    "einops>=0.6.0",
+    "packaging",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=2.20.0",
+]
+triton = ["triton>=2.0.0"]
+jax = ["jax[cuda]>=0.4.0", "flax>=0.6.0"]
+
+[project.urls]
+Homepage = "https://github.com/revnet-zero/revnet-zero"
+Documentation = "https://revnet-zero.readthedocs.io"
+Repository = "https://github.com/revnet-zero/revnet-zero"
+"Bug Tracker" = "https://github.com/revnet-zero/revnet-zero/issues"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=revnet_zero --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+source = ["revnet_zero"]
+omit = ["*/tests/*", "*/test_*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
