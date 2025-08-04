@@ -33,6 +33,9 @@ setup(
         "numpy>=1.21.0",
         "einops>=0.6.0",
         "packaging",
+        "matplotlib>=3.5.0",
+        "tqdm>=4.60.0",
+        "psutil>=5.8.0",
     ],
     extras_require={
         "dev": [
