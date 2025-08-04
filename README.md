@@ -28,7 +28,7 @@ pip install revnet-zero[triton]
 pip install revnet-zero[jax]
 
 # Development installation
-git clone https://github.com/yourusername/revnet-zero
+git clone https://github.com/danieleschmidt/revnet-zero
 cd revnet-zero
 pip install -e ".[dev]"
 ```
@@ -660,7 +660,7 @@ outputs = continuous_model(
 ```bibtex
 @article{revnet_zero,
   title={RevNet-Zero: Extreme Memory Efficiency for Transformers via Reversible Computing},
-  author={Your Name},
+  author={Daniel Schmidt},
   journal={arXiv preprint arXiv:2025.xxxxx},
   year={2025}
 }
