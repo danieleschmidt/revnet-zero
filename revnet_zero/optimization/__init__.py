@@ -1,22 +1,24 @@
 """
-Performance optimization utilities for RevNet-Zero.
+Optimization module for RevNet-Zero.
 
-This module provides tools for optimizing model performance including
-caching, kernel fusion, and memory layout optimization.
+This module provides advanced optimization techniques including
+kernel fusion, memory optimization, and performance tuning.
 """
 
-from .cache_manager import CacheManager, CacheConfig
-from .kernel_optimizer import KernelOptimizer, FusedOperations
-from .memory_layout import MemoryLayoutOptimizer, optimize_memory_layout
-from .performance_profiler import PerformanceProfiler, ProfilerConfig
+from .performance import (
+    KernelFusion,
+    MemoryOptimizer,
+    InferenceOptimizer,
+    PerformanceProfiler,
+    OptimizationSuite,
+    optimize_model_for_inference,
+)
 
 __all__ = [
-    "CacheManager",
-    "CacheConfig", 
-    "KernelOptimizer",
-    "FusedOperations",
-    "MemoryLayoutOptimizer",
-    "optimize_memory_layout",
-    "PerformanceProfiler",
-    "ProfilerConfig",
+    'KernelFusion',
+    'MemoryOptimizer', 
+    'InferenceOptimizer',
+    'PerformanceProfiler',
+    'OptimizationSuite',
+    'optimize_model_for_inference',
 ]
