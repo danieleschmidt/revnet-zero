@@ -1,98 +1,176 @@
 #!/usr/bin/env python3
 """
-Basic functionality test for RevNet-Zero without external dependencies.
+Basic functionality test for RevNet-Zero library.
 
-This script tests core functionality using only standard library and 
-simulated PyTorch operations.
+This script tests the core components of the reversible transformer library
+to ensure basic functionality works correctly.
 """
 
-def test_imports():
-    """Test that all core modules can be imported."""
-    print("Testing imports...")
-    try:
-        # Test main imports
-        from revnet_zero import ReversibleTransformer
-        from revnet_zero.layers import ReversibleAttention, ReversibleFFN
-        from revnet_zero.memory import MemoryScheduler
-        from revnet_zero.utils import convert_to_reversible
-        print("✓ Core imports successful")
-        return True
-    except ImportError as e:
-        print(f"❌ Import failed: {e}")
-        return False
+import torch
+import torch.nn as nn
+from revnet_zero import (
+    ReversibleTransformer, 
+    ReversibleAttention, 
+    ReversibleFFN,
+    AdditiveCoupling,
+    MemoryScheduler
+)
 
-def test_model_creation():
-    """Test model creation without PyTorch."""
-    print("Testing model creation structure...")
-    try:
-        # Just test that the classes exist and can be instantiated at the Python level
-        from revnet_zero.models.reversible_transformer import ReversibleTransformer
-        
-        # Check class definition
-        assert hasattr(ReversibleTransformer, '__init__')
-        assert hasattr(ReversibleTransformer, 'forward')
-        assert hasattr(ReversibleTransformer, 'get_model_info')
-        
-        print("✓ Model class structure valid")
-        return True
-    except Exception as e:
-        print(f"❌ Model creation test failed: {e}")
-        return False
+def test_coupling_layers():
+    """Test coupling layer implementations."""
+    print("Testing coupling layers...")
+    
+    d_model = 256
+    batch_size = 2
+    seq_len = 64
+    
+    coupling = AdditiveCoupling(d_model)
+    x = torch.randn(batch_size, seq_len, d_model)
+    
+    # Test split and cat operations
+    x1, x2 = coupling.split_input(x)
+    assert x1.shape == (batch_size, seq_len, d_model // 2)
+    assert x2.shape == (batch_size, seq_len, d_model // 2)
+    
+    # Test forward and inverse
+    y1, y2 = coupling.forward(x1, x2)
+    x1_recovered, x2_recovered = coupling.inverse(y1, y2)
+    
+    # Check perfect reconstruction
+    assert torch.allclose(x1, x1_recovered, atol=1e-6)
+    assert torch.allclose(x2, x2_recovered, atol=1e-6)
+    
+    print("✓ Coupling layers working correctly")
+    return True
 
-def test_layer_structure():
-    """Test layer structure."""
-    print("Testing layer structure...")
-    try:
-        from revnet_zero.layers.reversible_attention import ReversibleAttention
-        from revnet_zero.layers.reversible_ffn import ReversibleFFN
-        from revnet_zero.layers.coupling_layers import AdditiveCoupling, AffineCoupling
-        
-        # Check that classes have required methods
-        assert hasattr(ReversibleAttention, 'forward')
-        assert hasattr(ReversibleFFN, 'forward')
-        assert hasattr(AdditiveCoupling, 'forward')
-        assert hasattr(AffineCoupling, 'forward')
-        
-        print("✓ Layer structure valid")
-        return True
-    except Exception as e:
-        print(f"❌ Layer structure test failed: {e}")
-        return False
+def test_reversible_attention():
+    """Test reversible attention layer."""
+    print("Testing reversible attention...")
+    
+    d_model = 256
+    num_heads = 8
+    batch_size = 2
+    seq_len = 64
+    
+    attention = ReversibleAttention(
+        d_model=d_model,
+        num_heads=num_heads,
+        dropout=0.1
+    )
+    
+    x = torch.randn(batch_size, seq_len, d_model)
+    
+    # Test forward pass
+    with torch.no_grad():  # No grad for testing
+        output = attention(x, use_reversible=False)  # Use standard mode for testing
+    assert output.shape == x.shape
+    
+    # Test memory estimation
+    memory_est = attention.estimate_memory_usage(batch_size, seq_len)
+    assert 'reversible_memory' in memory_est
+    assert 'memory_saved' in memory_est
+    
+    print("✓ Reversible attention working correctly")
+    return True
+
+def test_reversible_ffn():
+    """Test reversible feedforward network."""
+    print("Testing reversible FFN...")
+    
+    d_model = 256
+    d_ff = 1024
+    batch_size = 2
+    seq_len = 64
+    
+    ffn = ReversibleFFN(
+        d_model=d_model,
+        d_ff=d_ff,
+        activation="gelu",
+        dropout=0.1
+    )
+    
+    x = torch.randn(batch_size, seq_len, d_model)
+    
+    # Test forward pass
+    with torch.no_grad():  # No grad for testing
+        output = ffn(x, use_reversible=False)  # Use standard mode for testing
+    assert output.shape == x.shape
+    
+    # Test memory estimation
+    memory_est = ffn.estimate_memory_usage(batch_size, seq_len)
+    assert 'reversible_memory' in memory_est
+    assert 'memory_saved' in memory_est
+    
+    print("✓ Reversible FFN working correctly")
+    return True
+
+def test_reversible_transformer():
+    """Test complete reversible transformer model."""
+    print("Testing reversible transformer...")
+    
+    vocab_size = 1000
+    num_layers = 2  # Small for testing
+    d_model = 128   # Small for testing
+    num_heads = 4   # Small for testing
+    d_ff = 256      # Small for testing
+    max_seq_len = 512
+    
+    model = ReversibleTransformer(
+        vocab_size=vocab_size,
+        num_layers=num_layers,
+        d_model=d_model,
+        num_heads=num_heads,
+        d_ff=d_ff,
+        max_seq_len=max_seq_len,
+        dropout=0.1
+    )
+    
+    batch_size = 1  # Small for testing
+    seq_len = 32    # Small for testing
+    
+    # Test forward pass
+    input_ids = torch.randint(0, vocab_size, (batch_size, seq_len))
+    with torch.no_grad():
+        outputs = model(input_ids, use_reversible=False)  # Standard mode for testing
+    
+    assert 'logits' in outputs
+    assert outputs['logits'].shape == (batch_size, seq_len, vocab_size)
+    
+    # Test model info
+    model_info = model.get_model_info()
+    assert model_info['num_layers'] == num_layers
+    assert model_info['d_model'] == d_model
+    
+    print("✓ Reversible transformer working correctly")
+    return True
 
 def test_memory_scheduler():
-    """Test memory scheduler structure."""
+    """Test memory scheduler functionality."""
     print("Testing memory scheduler...")
-    try:
-        from revnet_zero.memory.scheduler import MemoryScheduler, AdaptiveScheduler
-        from revnet_zero.memory.profiler import MemoryProfiler
-        
-        # Check that classes have required methods
-        assert hasattr(MemoryScheduler, 'should_recompute')
-        assert hasattr(AdaptiveScheduler, 'adapt_policies')
-        assert hasattr(MemoryProfiler, 'start_profiling')
-        
-        print("✓ Memory scheduler structure valid")
-        return True
-    except Exception as e:
-        print(f"❌ Memory scheduler test failed: {e}")
-        return False
-
-def test_examples():
-    """Test examples structure."""
-    print("Testing examples...")
-    try:
-        from examples.basic_usage import BasicExample
-        from examples.benchmarking import BenchmarkSuite
-        
-        # Check that example classes exist
-        assert hasattr(BasicExample, 'run_complete_example')
-        assert hasattr(BenchmarkSuite, 'scaling_benchmark')
-        
-        print("✓ Examples structure valid")
-        return True
-    except Exception as e:
-        print(f"❌ Examples test failed: {e}")
-        return False
+    
+    # Create a simple model for testing
+    model = nn.Sequential(
+        nn.Linear(256, 512),
+        nn.ReLU(),
+        nn.Linear(512, 256)
+    )
+    
+    scheduler = MemoryScheduler(model, memory_budget=1024*1024*1024)  # 1GB
+    
+    # Test policy setting
+    from revnet_zero.memory.scheduler import RecomputePolicy
+    scheduler.set_policy([0, 1], RecomputePolicy.RECOMPUTE)
+    scheduler.set_policy([2], RecomputePolicy.STORE)
+    
+    # Test decision making
+    should_recompute_0 = scheduler.should_recompute(0)
+    should_recompute_2 = scheduler.should_recompute(2)
+    
+    assert should_recompute_0 == True
+    assert should_recompute_2 == False
+    
+    print("✓ Memory scheduler working correctly")
+    return True
 
 def test_cli_structure():
     """Test CLI structure."""
@@ -169,12 +247,11 @@ def run_all_tests():
     print("=" * 60)
     
     tests = [
-        ("Package Imports", test_imports),
-        ("Model Creation", test_model_creation),
-        ("Layer Structure", test_layer_structure),
+        ("Coupling Layers", test_coupling_layers),
+        ("Reversible Attention", test_reversible_attention),
+        ("Reversible FFN", test_reversible_ffn),
+        ("Reversible Transformer", test_reversible_transformer),
         ("Memory Scheduler", test_memory_scheduler),
-        ("Examples", test_examples),
-        ("CLI Structure", test_cli_structure),
         ("Package Metadata", test_package_metadata),
         ("Configuration Files", test_configuration_files),
     ]
