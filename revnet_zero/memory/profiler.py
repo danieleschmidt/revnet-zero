@@ -11,7 +11,11 @@ from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, field
 import time
 import json
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
 from pathlib import Path
 
 
@@ -379,6 +383,10 @@ class DetailedMemoryProfiler(MemoryProfiler):
         Args:
             save_path: Optional path to save the plot
         """
+        if not HAS_MATPLOTLIB:
+            print("matplotlib not available, skipping plot generation")
+            return
+            
         if not self.snapshots:
             print("No profiling data available")
             return
@@ -410,7 +418,7 @@ class DetailedMemoryProfiler(MemoryProfiler):
         else:
             plt.savefig(self.output_dir / "memory_timeline.png", dpi=300, bbox_inches='tight')
         
-        plt.show()
+        plt.close()  # Close the figure to prevent display issues
     
     def export_chrome_trace(self, save_path: Optional[Path] = None):
         """

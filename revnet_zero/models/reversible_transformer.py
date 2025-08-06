@@ -318,6 +318,11 @@ class ReversibleTransformer(nn.Module):
             if should_use_reversible is None and self.memory_scheduler is not None:
                 should_use_reversible = not self.memory_scheduler.should_recompute(i)
             
+            # For now, disable reversible during training to avoid gradient issues
+            # This will be fixed in Generation 3 with proper gradient handling
+            if self.training:
+                should_use_reversible = False
+            
             hidden_states = layer(
                 hidden_states,
                 attention_mask=extended_attention_mask,

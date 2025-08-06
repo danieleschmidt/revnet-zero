@@ -13,8 +13,12 @@ import gc
 from typing import Dict, List, Tuple, Optional, Any, Callable
 import numpy as np
 from collections import defaultdict
-import matplotlib.pyplot as plt
-import seaborn as sns
+try:
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    HAS_PLOTTING = True
+except ImportError:
+    HAS_PLOTTING = False
 
 
 class PerformanceBenchmark:
