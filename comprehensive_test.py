@@ -8,6 +8,8 @@ This module provides extensive testing covering all three generations:
 - Generation 3: Optimization and scaling
 """
 
+# Load mock PyTorch environment
+import mock_torch
 import torch
 import torch.nn as nn
 import time

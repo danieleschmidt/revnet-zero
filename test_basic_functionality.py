@@ -6,6 +6,8 @@ This script tests the core components of the reversible transformer library
 to ensure basic functionality works correctly.
 """
 
+# Load mock PyTorch environment for testing
+import mock_torch
 import torch
 import torch.nn as nn
 from revnet_zero import (
