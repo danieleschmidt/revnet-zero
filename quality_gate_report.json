@@ -1,0 +1,110 @@
+{
+  "timestamp": "2025-08-13T17:56:26.424618",
+  "execution_time_seconds": 0.19318270683288574,
+  "overall_score": 86.42361111111111,
+  "gates_passed": 6,
+  "total_gates": 8,
+  "pass_rate": 75.0,
+  "project_root": "/root/repo",
+  "quality_gates": [
+    {
+      "name": "Code Quality",
+      "passed": true,
+      "score": 85.0,
+      "details": {
+        "file_structure_score": 100.0,
+        "python_files_count": 88,
+        "code_quality_score": 70,
+        "quality_issues": 3
+      },
+      "timestamp": "2025-08-13T17:56:26.238436"
+    },
+    {
+      "name": "Security Validation",
+      "passed": false,
+      "score": 66.66666666666667,
+      "details": {
+        "security_files_score": 100.0,
+        "security_code_score": 0,
+        "security_issues": 12,
+        "validation_score": 100
+      },
+      "timestamp": "2025-08-13T17:56:26.248062"
+    },
+    {
+      "name": "Performance Benchmark",
+      "passed": false,
+      "score": 76.66666666666667,
+      "details": {
+        "performance_modules_score": 100.0,
+        "import_error": "No module named 'torch'",
+        "memory_score": 80
+      },
+      "timestamp": "2025-08-13T17:56:26.250075"
+    },
+    {
+      "name": "Integration Tests",
+      "passed": true,
+      "score": 100.0,
+      "details": {
+        "test_files_count": 9,
+        "test_dirs_count": 1,
+        "test_structure_score": 100,
+        "core_validation": "passed",
+        "core_validation_score": 100
+      },
+      "timestamp": "2025-08-13T17:56:26.418176"
+    },
+    {
+      "name": "Documentation Quality",
+      "passed": true,
+      "score": 100.0,
+      "details": {
+        "doc_structure_score": 100.0,
+        "docs_found": 5,
+        "readme_score": 100,
+        "docstring_coverage": 100.0
+      },
+      "timestamp": "2025-08-13T17:56:26.421794"
+    },
+    {
+      "name": "Dependency Validation",
+      "passed": true,
+      "score": 85.55555555555554,
+      "details": {
+        "dependency_files_score": 66.66666666666666,
+        "pyproject_score": 100.0,
+        "dependency_security_score": 90
+      },
+      "timestamp": "2025-08-13T17:56:26.422182"
+    },
+    {
+      "name": "Architecture Compliance",
+      "passed": true,
+      "score": 95.0,
+      "details": {
+        "architecture_structure_score": 100.0,
+        "module_organization_score": 100.0,
+        "separation_score": 85
+      },
+      "timestamp": "2025-08-13T17:56:26.422409"
+    },
+    {
+      "name": "Production Readiness",
+      "passed": true,
+      "score": 82.5,
+      "details": {
+        "production_structure_score": 75.0,
+        "error_handling_score": 75,
+        "logging_score": 80,
+        "deployment_score": 100
+      },
+      "timestamp": "2025-08-13T17:56:26.424498"
+    }
+  ],
+  "recommendations": [
+    "Enhance security: implement input validation, remove dangerous patterns",
+    "Optimize performance: improve import times, reduce memory usage"
+  ],
+  "status": "FAIL"
+}
