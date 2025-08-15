@@ -81,7 +81,17 @@ def run_interactive_tutorial():
     print("\nType 'all' to run complete tutorial, or step number (1-5):")
     
     try:
-        choice = input("> ").strip().lower()
+        try:
+            choice = input("> ").strip().lower()
+            # Validate input
+            if len(choice) > 10:  # Reasonable limit
+                raise ValueError("Input too long")
+        except (EOFError, KeyboardInterrupt):
+            print("\nExiting demo.")
+            return
+        except Exception as e:
+            print(f"Invalid input: {e}")
+            continue
         
         if choice == 'all':
             for step in steps:
@@ -89,7 +99,10 @@ def run_interactive_tutorial():
                 print("-" * 40)
                 run_tutorial_step(step['action'])
                 print("\nPress Enter to continue...")
-                input()
+                try:
+                    input()
+                except (EOFError, KeyboardInterrupt):
+                    break
         elif choice.isdigit() and 1 <= int(choice) <= len(steps):
             step = steps[int(choice) - 1]
             print(f"\n📚 {step['title']}")
