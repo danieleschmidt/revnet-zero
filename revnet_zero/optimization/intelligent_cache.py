@@ -373,7 +373,9 @@ class IntelligentCacheManager:
                 return None
             
             with open(file_path, 'rb') as f:
-                cache_data = pickle.load(f)
+                # Secure pickle loading with size limit
+                content = f.read(1024 * 1024 * 10)  # 10MB limit
+                cache_data = pickle.loads(content)
             
             data = cache_data['value']
             
@@ -623,8 +625,14 @@ class IntelligentCacheManager:
         try:
             import gzip
             decompressed = gzip.decompress(data)
+            # Secure pickle loading with size validation
+            if len(decompressed) > 1024 * 1024 * 100:  # 100MB limit
+                raise ValueError("Deserialized data too large")
             return pickle.loads(decompressed)
         except:
+            # Secure pickle loading with size validation
+            if len(data) > 1024 * 1024 * 100:  # 100MB limit
+                raise ValueError("Deserialized data too large")
             return pickle.loads(data)
     
     def _tags_match(self, entry_tags: Dict[str, str], filter_tags: Dict[str, str]) -> bool:

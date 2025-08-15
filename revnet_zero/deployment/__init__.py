@@ -9,6 +9,24 @@ from .container import DockerBuilder, create_dockerfile
 from .cloud import CloudDeployment, CloudConfig
 from .serving import ModelServer, ServingConfig
 from .monitoring import DeploymentMonitor, HealthCheck
+from .internationalization import (
+    InternationalizationManager,
+    ComplianceValidator,
+    get_i18n_manager,
+    set_language,
+    get_text,
+    is_region_compliant,
+    SupportedLanguage,
+    RegionCompliance
+)
+from .multi_region import (
+    MultiRegionDeploymentManager,
+    RegionConfig,
+    Region,
+    CloudProvider as MultiRegionCloudProvider,
+    LoadBalancingStrategy,
+    create_default_multi_region_setup
+)
 
 __all__ = [
     "DockerBuilder",
@@ -19,4 +37,20 @@ __all__ = [
     "ServingConfig",
     "DeploymentMonitor",
     "HealthCheck",
+    # Internationalization
+    "InternationalizationManager",
+    "ComplianceValidator",
+    "get_i18n_manager",
+    "set_language",
+    "get_text",
+    "is_region_compliant",
+    "SupportedLanguage",
+    "RegionCompliance",
+    # Multi-Region
+    "MultiRegionDeploymentManager",
+    "RegionConfig",
+    "Region",
+    "MultiRegionCloudProvider",
+    "LoadBalancingStrategy",
+    "create_default_multi_region_setup",
 ]

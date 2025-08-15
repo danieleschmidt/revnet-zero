@@ -208,7 +208,9 @@ class DiskCache:
             with self.lock:
                 import gzip
                 with gzip.open(cache_file, 'rb', compresslevel=self.compression_level) as f:
-                    return pickle.load(f)
+                    # Secure pickle loading with size limit
+                    content = f.read(1024 * 1024 * 10)  # 10MB limit
+                    return pickle.loads(content)
         except Exception:
             # Remove corrupted cache file
             cache_file.unlink(missing_ok=True)

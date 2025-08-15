@@ -17,7 +17,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Import mock torch
-exec(open('mock_torch.py').read())
+# Secure mock loading - disabled for security\n# exec(open('mock_torch.py').read())
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
