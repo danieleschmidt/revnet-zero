@@ -7,7 +7,7 @@ environments including Docker containers, cloud platforms, and edge devices.
 
 from .container import DockerBuilder, create_dockerfile
 from .cloud import CloudDeployment, CloudConfig
-from .serving import ModelServer, ServingConfig
+# from .serving import ModelServer, ServingConfig  # Optional dependency
 from .monitoring import DeploymentMonitor, HealthCheck
 from .internationalization import (
     InternationalizationManager,
@@ -33,8 +33,8 @@ __all__ = [
     "create_dockerfile",
     "CloudDeployment", 
     "CloudConfig",
-    "ModelServer",
-    "ServingConfig",
+    # "ModelServer",
+    # "ServingConfig",
     "DeploymentMonitor",
     "HealthCheck",
     # Internationalization
