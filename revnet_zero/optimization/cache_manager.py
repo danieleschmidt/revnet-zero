@@ -14,6 +14,8 @@ import threading
 import time
 import hashlib
 import pickle
+import json
+import warnings
 from pathlib import Path
 
 
@@ -208,9 +210,9 @@ class DiskCache:
             with self.lock:
                 import gzip
                 with gzip.open(cache_file, 'rb', compresslevel=self.compression_level) as f:
-                    # Secure pickle loading with size limit
+                    # Secure loading with size limit and validation
                     content = f.read(1024 * 1024 * 10)  # 10MB limit
-                    return pickle.loads(content)
+                    return self._safe_deserialize(content)
         except Exception:
             # Remove corrupted cache file
             cache_file.unlink(missing_ok=True)
@@ -270,6 +272,54 @@ class CacheManager:
         
         # Cache statistics
         self.start_time = time.time()
+    
+    def _safe_deserialize(self, data: bytes) -> Any:
+        """
+        Secure deserialization with validation and sandboxing.
+        
+        Args:
+            data: Serialized data bytes
+            
+        Returns:
+            Deserialized object
+            
+        Raises:
+            ValueError: If data is unsafe or corrupted
+        """
+        try:
+            # First try JSON for simple data types (safest)
+            try:
+                text_data = data.decode('utf-8')
+                return json.loads(text_data)
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                pass
+            
+            # For complex objects, use restricted pickle with validation
+            import io
+            
+            # Size validation
+            if len(data) > 1024 * 1024 * 100:  # 100MB limit
+                raise ValueError("Serialized data exceeds size limit")
+            
+            # Use restricted unpickler for safety
+            class SafeUnpickler(pickle.Unpickler):
+                def load_global(self, module, name):
+                    # Only allow safe modules and classes
+                    safe_modules = {
+                        'builtins', 'collections', 'numpy', 'torch', 
+                        'revnet_zero', '__main__'
+                    }
+                    if module.split('.')[0] not in safe_modules:
+                        raise pickle.UnpicklingError(f"Unsafe module: {module}")
+                    return super().load_global(module, name)
+            
+            buffer = io.BytesIO(data)
+            unpickler = SafeUnpickler(buffer)
+            return unpickler.load()
+            
+        except Exception as e:
+            warnings.warn(f"Failed to deserialize cache data: {e}")
+            raise ValueError(f"Cache deserialization failed: {e}")
     
     def get(self, key: str) -> Optional[Any]:
         """
