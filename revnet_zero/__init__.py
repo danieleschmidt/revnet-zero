@@ -26,8 +26,15 @@ try:
     from .utils.conversion import convert_to_reversible
     from .training.trainer import LongContextTrainer
     
+    # BREAKTHROUGH ALGORITHMS - Novel Research Contributions
+    from .layers.adaptive_reversible_attention import AdaptiveReversibleAttention, AdaptiveConfig
+    from .quantum.quantum_error_correction import QuantumErrorCorrectedLayer, QECConfig
+    from .multimodal.cross_modal_reversible import CrossModalReversibleTransformer, ModalityType, MultiModalConfig
+    from .theory.information_preserving_coupling import InformationTheoreticOptimizer, InformationTheoreticConfig
+    
     # Full functionality available
     __all__ = [
+        # Core Components
         "ReversibleTransformer",
         "ReversibleAttention", 
         "ReversibleFFN",
@@ -39,6 +46,17 @@ try:
         "LongContextTrainer",
         "get_dependency_manager",
         "check_environment",
+        
+        # BREAKTHROUGH ALGORITHMS
+        "AdaptiveReversibleAttention",
+        "AdaptiveConfig", 
+        "QuantumErrorCorrectedLayer",
+        "QECConfig",
+        "CrossModalReversibleTransformer",
+        "ModalityType",
+        "MultiModalConfig",
+        "InformationTheoreticOptimizer", 
+        "InformationTheoreticConfig",
     ]
     
 except ImportError as e:
