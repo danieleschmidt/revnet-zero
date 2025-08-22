@@ -72,6 +72,7 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 
+
 class EnhancedReversibleTransformerBlock(nn.Module):
     """
     🚀 GENERATION 1 ENHANCED: Revolutionary Reversible Transformer Block
@@ -88,7 +89,7 @@ class EnhancedReversibleTransformerBlock(nn.Module):
         d_model: int,
         num_heads: int,
         d_ff: int,
-        coupling: Union[str, BaseCoupling] = "quantum",  # Default to quantum coupling
+        coupling: Union[str, BaseCoupling] = "additive",  # Safe default
         dropout: float = 0.1,
         use_flash_attention: bool = True,  # Enhanced default
         use_rational_attention: bool = True,  # Enhanced default
@@ -107,8 +108,8 @@ class EnhancedReversibleTransformerBlock(nn.Module):
         
         # BREAKTHROUGH 1: Quantum-Inspired Coupling
         if use_quantum_coupling and coupling == "quantum":
-            from ..layers.quantum_coupling import QuantumReversibleCoupling
-            self.quantum_coupling = QuantumReversibleCoupling(d_model)
+            from ..layers.quantum_coupling import QuantumRotationCoupling
+            self.quantum_coupling = QuantumRotationCoupling(d_model)
             coupling_layer = self.quantum_coupling
         else:
             coupling_layer = coupling
@@ -328,7 +329,7 @@ class EnhancedReversibleTransformer(nn.Module):
         num_heads: int = 12,
         d_ff: int = 3072,
         max_seq_len: int = 262144,
-        coupling: Union[str, BaseCoupling] = "quantum",  # Enhanced default
+        coupling: Union[str, BaseCoupling] = "additive",  # Safe default
         dropout: float = 0.1,
         use_flash_attention: bool = True,  # Enhanced default
         use_rational_attention: bool = True,  # Enhanced default
@@ -420,6 +421,7 @@ class EnhancedReversibleTransformer(nn.Module):
             self.output_projection.weight = self.token_embedding.weight
         
         # Performance tracking for research validation
+        from collections import defaultdict
         self.performance_metrics = {
             'quantum_metrics': defaultdict(list),
             'neuromorphic_metrics': defaultdict(list),
@@ -640,3 +642,8 @@ class EnhancedReversibleTransformer(nn.Module):
             "parameter_size_mb": total_params * 4 / (1024 * 1024),  # Assuming float32
             "memory_scheduler_enabled": self.memory_scheduler is not None,
         }
+
+
+# Set backward compatibility aliases after class definitions
+ReversibleTransformerBlock = EnhancedReversibleTransformerBlock
+ReversibleTransformer = EnhancedReversibleTransformer

@@ -41,7 +41,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
 from ..models.reversible_transformer import ReversibleTransformer
-from ..optimization.intelligent_cache import IntelligentCache
+from ..optimization.intelligent_cache import IntelligentCacheManager as IntelligentCache
 
 class CloudProvider(Enum):
     """Supported cloud providers."""

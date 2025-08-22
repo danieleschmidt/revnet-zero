@@ -18,7 +18,7 @@ _env_status = check_environment()
 
 # Safe imports with fallback handling
 try:
-    from .models.reversible_transformer import ReversibleTransformer
+    from .models.reversible_transformer import EnhancedReversibleTransformer as ReversibleTransformer
     from .layers.reversible_attention import ReversibleAttention
     from .layers.reversible_ffn import ReversibleFFN
     from .layers.coupling_layers import AdditiveCoupling, AffineCoupling
