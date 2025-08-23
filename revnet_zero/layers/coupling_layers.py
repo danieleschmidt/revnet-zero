@@ -65,7 +65,7 @@ class AdditiveCoupling(BaseCoupling):
     
     def forward(self, x1: torch.Tensor, x2: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
-        Forward additive coupling: y1 = x1, y2 = x2 + F(x1)
+        Forward additive coupling: y1 = x1, y2 = x2 + F(x1) with security validation
         
         Args:
             x1: First half of input tensor
@@ -74,6 +74,12 @@ class AdditiveCoupling(BaseCoupling):
         Returns:
             y1, y2: Transformed tensors
         """
+        from ..security.input_validation import InputSanitizer
+        
+        # Sanitize inputs for security
+        x1 = InputSanitizer.sanitize_tensor_input(x1)
+        x2 = InputSanitizer.sanitize_tensor_input(x2)
+        
         y1 = x1
         transform = self.transform_net(x1)
         y2 = x2 + transform
