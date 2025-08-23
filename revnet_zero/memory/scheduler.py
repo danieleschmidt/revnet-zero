@@ -45,13 +45,30 @@ class MemoryScheduler:
         memory_budget: Optional[int] = None,
         strategy: str = "adaptive",
         device: Optional[torch.device] = None,
+        enable_generation3_optimizations: bool = True,
     ):
+        """🚀 GENERATION 3: Enhanced Memory Scheduler"""
         self.model = model
         self.memory_budget = memory_budget or self._get_default_memory_budget()
+        self.enable_generation3_optimizations = enable_generation3_optimizations
+        
+        # Generation 3 enhancements
+        if enable_generation3_optimizations:
+            self.intelligent_scheduling = True
+            self.adaptive_recomputation = True
+            self.performance_analytics = {}
+            self._setup_intelligent_scheduling()
+            
         self.strategy = strategy
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    def _setup_intelligent_scheduling(self):
+        """Setup Generation 3 intelligent scheduling capabilities"""
+        self.optimization_history = []
+        self.memory_efficiency_score = 0.0
+        self.adaptive_threshold = 0.8
         
-        # Memory tracking
+    # Memory tracking
         self.current_memory_usage = 0
         self.peak_memory_usage = 0
         self.memory_saved = 0

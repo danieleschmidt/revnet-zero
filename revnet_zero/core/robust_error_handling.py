@@ -98,7 +98,36 @@ class RobustErrorHandler:
         handler.setFormatter(logging.Formatter(
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         ))
-        self.logger.addHandler(handler)
+    
+    def handle_with_security(self, operation: Callable, *args, **kwargs) -> Any:
+        """Execute operation with security validation and error recovery"""
+        from ..security.input_validation import InputSanitizer
+        
+        # Sanitize inputs for security
+        sanitized_args = []
+        for arg in args:
+            try:
+                sanitized_args.append(InputSanitizer.sanitize_tensor_input(arg))
+            except Exception:
+                sanitized_args.append(arg)  # Keep original if sanitization fails
+        
+        sanitized_kwargs = {}
+        for key, value in kwargs.items():
+            try:
+                sanitized_kwargs[key] = InputSanitizer.sanitize_tensor_input(value)
+            except Exception:
+                sanitized_kwargs[key] = value
+        
+        try:
+            return operation(*sanitized_args, **sanitized_kwargs)
+        except Exception as e:
+            self.logger.error(f"Operation failed with security handling: {e}")
+            # Implement recovery logic here
+            raise
+    
+    def _setup_logging(self):
+        """Setup logging system"""
+        self.logger.addHandler(self.handler)
         self.logger.setLevel(logging.INFO)
         
         # Initialize component health

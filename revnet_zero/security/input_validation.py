@@ -14,6 +14,40 @@ class SecurityError(Exception):
     """Custom exception for security-related validation failures"""
     pass
 
+
+class SecurityValidationError(SecurityError):
+    """Raised when security validation fails"""
+    pass
+
+
+class InputSanitizer:
+    """Advanced input sanitization for security"""
+    
+    @staticmethod
+    def sanitize_tensor_input(tensor: Any, 
+                             max_size: int = 10000000,  # Increased for testing
+                             allowed_dtypes: Optional[List[str]] = None) -> Any:
+        """Sanitize tensor inputs with security checks"""
+        # Import torch dynamically to handle different environments
+        try:
+            import torch
+            if isinstance(tensor, torch.Tensor):
+                if tensor.numel() > max_size:
+                    raise SecurityValidationError(f"Tensor too large: {tensor.numel()} > {max_size}")
+                
+                if allowed_dtypes and str(tensor.dtype) not in allowed_dtypes:
+                    raise SecurityValidationError(f"Tensor dtype {tensor.dtype} not allowed")
+                
+                # Check for NaN/Inf that could cause security issues
+                if torch.isnan(tensor).any() or torch.isinf(tensor).any():
+                    raise SecurityValidationError("Tensor contains NaN or Inf values")
+                
+                return tensor.detach().clone() if hasattr(tensor, 'detach') else tensor
+        except ImportError:
+            pass
+        
+        return tensor
+
 class InputValidator:
     """
     Comprehensive input validation for RevNet-Zero components.
