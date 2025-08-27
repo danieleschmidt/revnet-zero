@@ -5,10 +5,23 @@ This module provides cutting-edge performance optimization techniques
 including kernel fusion, memory optimization, and distributed inference.
 """
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.checkpoint import checkpoint
+# Safe imports with fallbacks for mock environment
+try:
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    from torch.utils.checkpoint import checkpoint
+except ImportError:
+    # Use mock/fallback implementations
+    from revnet_zero.core.dependency_manager import get_dependency_manager
+    dm = get_dependency_manager()
+    torch = dm.torch
+    nn = torch.nn
+    F = torch.nn.functional
+    
+    # Mock checkpoint function
+    def checkpoint(func, *args, **kwargs):
+        return func(*args, **kwargs)
 from typing import Dict, List, Optional, Any, Tuple, Union, Callable
 import numpy as np
 import logging
